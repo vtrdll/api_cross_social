@@ -1,0 +1,462 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}FEED{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/crossfit-feed.css' %}">
+<!-- Lucide Icons -->
+<script src="https://unpkg.com/lucide@latest"></script>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen" style="background-color: hsl(var(--background));">
+  
+  <!-- Header -->
+  
+  <main class="container" style="padding-bottom: 5rem;">
+    
+    <!-- Stories Bar -->
+    <div class="stories-bar">
+      <div class="stories-container">
+        {% if user.is_authenticated %}
+        <!-- Add Story Button -->
+        <div class="story-item" data-bs-toggle="modal" data-bs-target="#addStoryModal">
+          <div class="story-add">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14"></path>
+              <path d="M12 5v14"></path>
+            </svg>
+          </div>
+          <span class="story-username">Adicionar Story</span>
+        </div>
+        {% endif %}
+
+        <!-- Stories -->
+        {% for story in stories %}
+          {% if story.story_images.all or story.story_videos.all %}
+          <div class="story-item" data-bs-toggle="modal" data-bs-target="#storyModal{{ story.id }}" data-story-id="{{ story.id }}">
+            <div class="story-ring {% if story.id in viewed_stories %}viewed{% else %}unseen{% endif %}">
+              <div class="story-avatar-wrapper">
+                {% if story.user.profile.photo %}
+                  <img src="{{ story.user.profile.photo.url }}" alt="{{ story.user.username }}">
+                {% else %}
+                  <div style="width: 100%; height: 100%; background-color: hsl(var(--secondary));"></div>
+                {% endif %}
+              </div>
+            </div>
+            <span class="story-username">{{ story.user.username }}</span>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Feed -->
+    <div class="feed">
+      
+      <!-- WOD Card (Pinned) -->
+      {% if pinned %}
+      <div class="wod-card">
+        <div class="wod-badge gradient-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" x2="12" y1="17" y2="22"></line>
+            <path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"></path>
+          </svg>
+          <span>TREINO DO DIA</span>
+        </div>
+        
+        <div class="wod-content">
+          <!-- Coach Info -->
+          <div class="wod-coach">
+            {% if pinned.coach.user.profile.photo %}
+              <img src="{{ pinned.coach.user.profile.photo.url }}" alt="{{ pinned.coach.user.username }}">
+            {% else %}
+              <div style="width: 3rem; height: 3rem; border-radius: 9999px; background-color: hsl(var(--secondary));"></div>
+            {% endif %}
+            <div>
+              <a href="{% url 'profile-detail' pinned.coach.user.pk %}" style="text-decoration: none;">
+                <div class="wod-coach-name">
+                  {{ pinned.coach.user.username }}
+                  <svg class="verified-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/>
+                  </svg>
+                </div>
+              </a>
+              <span class="wod-coach-role">Coach</span>
+            </div>
+          </div>
+
+          <!-- WOD Title -->
+          <div class="wod-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6.5 6.5 11 11"></path>
+              <path d="m21 21-1-1"></path>
+              <path d="m3 3 1 1"></path>
+              <path d="m18 22 4-4"></path>
+              <path d="m2 6 4-4"></path>
+              <path d="m3 10 7-7"></path>
+              <path d="m14 21 7-7"></path>
+            </svg>
+            <h3>{{ pinned.title }}</h3>
+          </div>
+
+          <!-- Description -->
+          <div class="wod-description">
+            <pre>{{ pinned.description_wod }}</pre>
+          </div>
+
+          <!-- Loads -->
+          <div class="wod-loads">
+            <h4>📊 Cargas</h4>
+            <div class="wod-badges">
+              <span class="badge badge-primary">Elite: {{ pinned.elite }}</span>
+              <span class="badge badge-secondary">RX: {{ pinned.rx }}</span>
+              <span class="badge badge-secondary">Amador: {{ pinned.amauter }}</span>
+              <span class="badge badge-secondary">Scaled: {{ pinned.scaled }}</span>
+              <span class="badge badge-secondary">Fit: {{ pinned.fit }}</span>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="wod-footer">
+            <div class="wod-meta">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                {{ pinned.created_at|date:"d/m/Y H:i" }}
+              </span>
+              <span>{{ pinned.like.count }} curtidas</span>
+            </div>
+
+            <form method="post" action="{% url 'like-wod' pinned.pk %}" style="margin: 0;">
+              {% csrf_token %}
+              {% if user in pinned.like.all %}
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                  </svg>
+                  Curtido
+                </button>
+              {% else %}
+                <button type="submit" class="btn btn-outline btn-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+                  </svg>
+                  Curtir
+                </button>
+              {% endif %}
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Posts -->
+      {% for post in posts %}
+      <div class="post-card">
+        <!-- Header -->
+        <div class="post-header">
+          <div class="post-author">
+            {% if post.author.profile.photo %}
+              <img src="{{ post.author.profile.photo.url }}" alt="{{ post.author.username }}">
+            {% else %}
+              <div style="width: 2.75rem; height: 2.75rem; border-radius: 9999px; background-color: hsl(var(--secondary));"></div>
+            {% endif %}
+            <div>
+              <a href="{% url 'profile-detail' post.author.pk %}" style="text-decoration: none;">
+                <div class="post-author-name">
+                  {{ post.author.username }}
+                  <svg class="verified-badge" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"/>
+                  </svg>
+                </div>
+              </a>
+              {% if post.author.profile.category %}
+                <span class="post-author-category">{{ post.author.profile.category }}</span>
+              {% endif %}
+            </div>
+          </div>
+          
+          <button class="btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="1"></circle>
+              <circle cx="19" cy="12" r="1"></circle>
+              <circle cx="5" cy="12" r="1"></circle>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Media -->
+        {% with imagens=post.media_dict.imagens videos=post.media_dict.videos %}
+        {% if imagens or videos %}
+        <div class="post-media" id="carousel-{{ post.id }}">
+          {% for imagem in imagens %}
+            <img src="{{ imagem }}" alt="Post image" {% if not forloop.first %}style="display: none;"{% endif %} data-index="{{ forloop.counter0 }}">
+          {% endfor %}
+          {% for vid in videos %}
+            <video controls muted loop {% if not imagens and not forloop.first %}style="display: none;"{% endif %} {% if imagens %}style="display: none;"{% endif %} data-index="{{ imagens|length|add:forloop.counter0 }}">
+              <source src="{{ vid }}" type="video/mp4">
+            </video>
+          {% endfor %}
+          
+          {% with total=imagens|length|add:videos|length %}
+          {% if total > 1 %}
+            <button class="carousel-nav prev" onclick="navigateCarousel('{{ post.id }}', -1)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m15 18-6-6 6-6"/>
+              </svg>
+            </button>
+            <button class="carousel-nav next" onclick="navigateCarousel('{{ post.id }}', 1)">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="m9 18 6-6-6-6"/>
+              </svg>
+            </button>
+            <div class="carousel-dots">
+              {% for i in total|make_list %}
+                <div class="carousel-dot {% if forloop.first %}active{% endif %}" data-index="{{ forloop.counter0 }}"></div>
+              {% endfor %}
+            </div>
+          {% endif %}
+          {% endwith %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Actions -->
+        <div class="post-actions">
+          <form method="post" action="{% url 'post-like' post.pk %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="post-action {% if user in post.like.all %}liked{% endif %}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="{% if user in post.like.all %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+              </svg>
+            </button>
+          </form>
+          
+          <button class="post-action" onclick="document.getElementById('comment-input-{{ post.id }}').focus()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="post-content">
+          <p class="post-likes">{{ post.like.count }} curtidas</p>
+          
+          {% if post.titulo %}
+            <h4 class="post-title">{{ post.titulo }}</h4>
+          {% endif %}
+          
+          <p class="post-text">{{ post.text }}</p>
+          
+          <span class="post-time">{{ post.created_at|date:"d/m/Y H:i" }}</span>
+        </div>
+
+        <!-- Owner Actions -->
+        {% if post in user.post_set.all %}
+        <div class="post-owner-actions">
+          <a href="{% url 'post-edit' post.pk %}" class="btn btn-outline btn-sm">Editar</a>
+          <a href="{% url 'post-delete' post.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+        </div>
+        {% endif %}
+
+        <!-- Comments -->
+        {% if post.comment_set.all %}
+        <div class="comments-section">
+          {% for comment in post.comment_set.all %}
+          <div class="comment">
+            {% if comment.author.profile.photo %}
+              <img src="{{ comment.author.profile.photo.url }}" alt="{{ comment.author.username }}">
+            {% else %}
+              <div style="width: 2rem; height: 2rem; border-radius: 9999px; background-color: hsl(var(--secondary)); flex-shrink: 0;"></div>
+            {% endif %}
+            <div class="comment-content">
+              <span class="comment-author">{{ comment.author.username }}</span>
+              <span class="comment-text">{{ comment.comment }}</span>
+              <div class="comment-meta">
+                <span>{{ comment.like_comment.count }} curtidas</span>
+                <form method="post" action="{% url 'like-comment' comment.pk %}" style="margin: 0;">
+                  {% csrf_token %}
+                  <button type="submit" class="comment-like-btn {% if user in comment.like_comment.all %}liked{% endif %}">
+                    {% if user in comment.like_comment.all %}❤️{% else %}🤍{% endif %} Curtir
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+          
+          {% if comment in user.comment_set.all %}
+          <div style="display: flex; gap: 0.5rem; margin-left: 2.75rem; margin-bottom: 1rem;">
+            <a href="{% url 'comment-update' comment.pk %}" class="btn btn-outline btn-sm">Editar</a>
+            <a href="{% url 'comment-delete' comment.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+          </div>
+          {% endif %}
+          {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Comment Form -->
+        <form method="post" class="comment-form">
+          {% csrf_token %}
+          <input type="hidden" name="post_id" value="{{ post.id }}">
+          <input type="text" name="comment" id="comment-input-{{ post.id }}" class="comment-input" placeholder="Adicione um comentário...">
+          <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
+        </form>
+      </div>
+      {% empty %}
+      <p style="text-align: center; color: hsl(var(--muted-foreground));">Nenhum post encontrado.</p>
+      {% endfor %}
+
+    </div>
+  </main>
+</div>
+
+<!-- Modal para adicionar Story -->
+<div class="modal fade" id="addStoryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background-color: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 1rem;">
+      <form method="post" action="{% url 'story_create' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-header" style="border-bottom: 1px solid hsl(var(--border)); padding: 1rem;">
+          <h5 class="modal-title" style="color: hsl(var(--foreground)); font-weight: 600;">Adicionar Story</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" style="padding: 1.5rem; text-align: center;">
+          <p style="color: hsl(var(--muted-foreground)); margin-bottom: 1rem;">Selecione foto ou vídeo para postar:</p>
+          <input type="file" name="media" multiple accept="image/*,video/mp4" class="form-control" style="background-color: hsl(var(--secondary)); border: 1px solid hsl(var(--border)); color: hsl(var(--foreground));">
+        </div>
+        <div class="modal-footer" style="border-top: 1px solid hsl(var(--border)); padding: 1rem;">
+          <button type="submit" class="btn btn-primary">Postar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Story Modals -->
+{% for story in stories %}
+{% if story.story_images.all or story.story_videos.all %}
+<div class="modal fade" id="storyModal{{ story.id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 28rem;">
+    <div class="modal-content" style="background-color: hsl(var(--card)); border: none; border-radius: 1rem; overflow: hidden;">
+      <!-- Header -->
+      <div style="position: absolute; top: 0; left: 0; right: 0; z-index: 10; padding: 1rem; background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent); display: flex; align-items: center; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          {% if story.user.profile.photo %}
+            <img src="{{ story.user.profile.photo.url }}" alt="{{ story.user.username }}" style="width: 2.5rem; height: 2.5rem; border-radius: 9999px; object-fit: cover; border: 2px solid rgba(255,255,255,0.3);">
+          {% endif %}
+          <span style="font-weight: 600; color: white;">{{ story.user.username }}</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          {% if story.user == request.user %}
+          <form method="post" action="{% url 'delete_story' story.id %}" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+          </form>
+          {% endif %}
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      {% with total=story.story_images.all|length|add:story.story_videos.all|length %}
+      {% if total > 1 %}
+      <div style="position: absolute; top: 0.5rem; left: 1rem; right: 1rem; display: flex; gap: 0.25rem; z-index: 11;">
+        {% for i in total|make_list %}
+        <div style="flex: 1; height: 2px; border-radius: 9999px; background-color: rgba(255,255,255,0.3);"></div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% endwith %}
+
+      <!-- Media Carousel -->
+      <div id="storyCarousel{{ story.id }}" class="carousel slide" data-bs-ride="false" style="aspect-ratio: 9/16; background-color: black;">
+        <div class="carousel-inner" style="height: 100%;">
+          {% for image in story.story_images.all %}
+          <div class="carousel-item {% if forloop.first %}active{% endif %}" style="height: 100%;">
+            <img src="{{ image.story_image.url }}" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+          {% endfor %}
+          {% for video in story.story_videos.all %}
+          <div class="carousel-item {% if not story.story_images.all and forloop.first %}active{% endif %}" style="height: 100%;">
+            <video controls style="width: 100%; height: 100%; object-fit: cover;">
+              <source src="{{ video.story_video.url }}" type="video/mp4">
+            </video>
+          </div>
+          {% endfor %}
+        </div>
+
+        {% with total=story.story_images.all|length|add:story.story_videos.all|length %}
+        {% if total > 1 %}
+        <button class="carousel-control-prev" type="button" data-bs-target="#storyCarousel{{ story.id }}" data-bs-slide="prev" style="opacity: 0;">
+          <span class="visually-hidden">Anterior</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#storyCarousel{{ story.id }}" data-bs-slide="next" style="opacity: 0;">
+          <span class="visually-hidden">Próximo</span>
+        </button>
+        {% endif %}
+        {% endwith %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+
+<script>
+// Initialize Lucide icons
+lucide.createIcons();
+
+// Carousel navigation for posts
+const carouselStates = {};
+
+function navigateCarousel(postId, direction) {
+  const container = document.getElementById('carousel-' + postId);
+  const items = container.querySelectorAll('img, video');
+  const dots = container.querySelectorAll('.carousel-dot');
+  
+  if (!carouselStates[postId]) carouselStates[postId] = 0;
+  
+  // Hide current
+  items[carouselStates[postId]].style.display = 'none';
+  dots[carouselStates[postId]]?.classList.remove('active');
+  
+  // Calculate new index
+  carouselStates[postId] += direction;
+  if (carouselStates[postId] < 0) carouselStates[postId] = items.length - 1;
+  if (carouselStates[postId] >= items.length) carouselStates[postId] = 0;
+  
+  // Show new
+  items[carouselStates[postId]].style.display = 'block';
+  dots[carouselStates[postId]]?.classList.add('active');
+}
+
+// Story viewed state
+document.addEventListener("DOMContentLoaded", function() {
+  const storyItems = document.querySelectorAll('.story-item[data-story-id]');
+  let viewedStories = JSON.parse(localStorage.getItem("viewedStories") || "[]");
+
+  storyItems.forEach(item => {
+    const storyId = item.dataset.storyId;
+    const ring = item.querySelector('.story-ring');
+    
+    if (viewedStories.includes(storyId)) {
+      ring?.classList.remove('unseen');
+      ring?.classList.add('viewed');
+    }
+
+    item.addEventListener("click", () => {
+      if (!viewedStories.includes(storyId)) {
+        viewedStories.push(storyId);
+        localStorage.setItem("viewedStories", JSON.stringify(viewedStories));
+      }
+      ring?.classList.remove('unseen');
+      ring?.classList.add('viewed');
+    });
+  });
+});
+</script>
+{% endblock %}

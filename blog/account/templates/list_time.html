@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+</head>
+
+<div class="container mt-5">
+  <h1 class="text-center mb-4">🏋️‍♂️ Times de CrossFit</h1>
+
+  <!-- Botão Criar Time (só aparece se o usuário for coach ou autenticado) -->
+  {% if user.is_authenticated and user.profile.is_coach %}
+    <div class="text-end mb-3">
+      <a href="{% url 'create_time' %}" class="btn btn-primary rounded-pill">
+        ➕ Criar Time
+      </a>
+    </div>
+  {% endif %}
+
+  {% if times %}
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      {% for time in times %}
+        <div class="col">
+          <div class="card h-100 border-0 shadow-sm rounded-4 position-relative">
+
+            <!-- Menu dropdown (editar/deletar) -->
+            {% if user.is_authenticated and user.profile.is_coach and user == time.creator %}
+              <div class="dropdown text-end position-absolute top-0 end-0 m-2">
+                <button class="btn btn-sm btn-light border-0" type="button" id="dropdownMenuButton{{ forloop.counter }}" data-bs-toggle="dropdown" aria-expanded="false">
+                  <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton{{ forloop.counter }}">
+                  <li><a class="dropdown-item" href="{% url 'update_time' time.id %}">✏️ Editar</a></li>
+                  <li><a class="dropdown-item text-danger" href="{% url 'delete_time' time.id %}">🗑️ Deletar</a></li>
+                </ul>
+              </div>
+            {% endif %}
+
+            <div class="card-body">
+              <h5 class="card-title text-truncate" title="{{ time.name }}">{{ time.name }}</h5>
+              <p class="card-text text-muted small mb-2">
+                {{ time.description|truncatewords:15|default:"Sem descrição." }}
+                {% for a in time_achievements %}
+                  <p>{{ a.placement }} º Lugar em {{ a.achievement }}</p>
+                {% endfor %}
+              </p>
+              <p class="small text-secondary mb-0">
+                Criado por: <strong>{{ time.creator.username }}</strong>
+              </p>
+            </div>
+
+            <div class="card-footer bg-white border-0 d-flex flex-column gap-2">
+              <div class="d-flex justify-content-between align-items-center small text-muted px-2">
+                <span>🏠 {{ time.box.box_name|truncatechars:18 }}</span>
+                <span>📋 {{ time.get_category_display }}</span>
+              </div>
+              <div class="d-flex justify-content-between align-items-center px-2">
+                <span class="badge bg-light text-dark border rounded-pill px-3 py-2">
+                  👥 {{ time.membros.count }} membros
+                  
+                  
+                
+                          {% for membro in membros %}
+                            <li>{{ membro.username }}</li>
+                          {% endfor %}
+                        
+
+                </span>
+                <a href="{% url 'detail_time' time.id %}" class="btn btn-sm btn-outline-primary rounded-pill">
+                  Ver Detalhes
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="text-center text-muted">Nenhum time encontrado no momento.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

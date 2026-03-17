@@ -1,0 +1,43 @@
+<button id="delete-btn">Deletar Post</button>
+
+<script>
+const urlParts = window.location.pathname.split('/');
+const postId = urlParts.filter(Boolean).pop(); // pega o ID do post
+const apiUrl = `/api/post/${postId}/`;
+
+document.getElementById("delete-btn").addEventListener("click", () => {
+    if (!confirm("Tem certeza que deseja deletar este post?")) return;
+
+    fetch(apiUrl, {
+        method: "DELETE", // <-- aqui é o DELETE
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken") // se estiver usando Django com CSRF
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            alert("Post deletado!");
+            window.location.href = "/"; // redireciona para home
+        } else {
+            alert("Erro ao deletar post.");
+        }
+    })
+    .catch(err => console.error(err));
+});
+
+// Função para pegar CSRF token do cookie (Django)
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + "=")) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %}Novo Evento • CROSS SOCIAL{% endblock %}
+
+{% block extra_head %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+  /* Container com visual premium */
+  .elite-container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 50px;
+    border-radius: 22px;
+
+    background: rgba(255,255,255,0.55);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255,255,255,0.35);
+
+    box-shadow:
+      0 10px 35px rgba(0,0,0,0.08),
+      inset 0 0 30px rgba(255,255,255,0.15);
+
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {opacity: 0; transform: translateY(20px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+
+  .elite-title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--color-secondary);
+    text-align: center;
+    margin-bottom: 35px;
+    letter-spacing: 1px;
+  }
+
+  label {
+    font-weight: 600;
+    color: #333;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .form-control {
+    background: rgba(255,255,255,0.92);
+    border: 1px solid #e0deff;
+    padding: 14px;
+    border-radius: 12px;
+    transition: 0.25s;
+  }
+
+  .form-control:focus {
+    border-color: var(--color-secondary);
+    box-shadow: 0 0 0 0.22rem rgba(255,0,84,0.20);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-secondary), #cc0045);
+    border: none;
+    padding: 14px;
+    width: 100%;
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    font-size: 1.1rem;
+    transition: 0.25s ease;
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #ff0101, #ff0054);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 22px rgba(252, 0, 0, 0.25);
+  }
+
+</style>
+{% endblock extra_head %}
+
+{% block content %}
+
+<div class="elite-container">
+
+  <div class="elite-title">Criar Novo Evento</div>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    {% if user.profile.is_coach %}
+
+      <div class="mb-4">
+        <label for="{{ form.title.id_for_label }}">Título do Evento</label>
+        {{ form.title|add_class:"form-control" }}
+      </div>
+
+      <div class="mb-4">
+        <label for="{{ form.text.id_for_label }}">Descrição</label>
+        {{ form.text|add_class:"form-control" }}
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <label for="{{ form.date_initial.id_for_label }}">Data de Início</label>
+          {{ form.date_initial|add_class:"form-control" }}
+          {% if form.date_initial.errors %}
+            <small class="text-danger">{{ form.date_initial.errors.0 }}</small>
+          {% endif %}
+        </div>
+
+        <div class="col-md-6 mb-4">
+          <label for="{{ form.date_end.id_for_label }}">Data de Término</label>
+          {{ form.date_end|add_class:"form-control" }}
+          {% if form.date_end.errors %}
+            <small class="text-danger">{{ form.date_end.errors.0 }}</small>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label for="{{ form.link.id_for_label }}">Link do Evento</label>
+        {{ form.link|add_class:"form-control" }}
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-4">
+          <label for="{{ form.local.id_for_label }}">Local</label>
+          {{ form.local|add_class:"form-control" }}
+        </div>
+
+        <div class="col-md-6 mb-4">
+          <label for="{{ form.price.id_for_label }}">Preço</label>
+          {{ form.price|add_class:"form-control" }}
+        </div>
+      </div>
+
+    {% endif %}
+
+    <button type="submit" class="btn btn-primary">Publicar</button>
+
+  </form>
+
+</div>
+
+{% endblock content %}

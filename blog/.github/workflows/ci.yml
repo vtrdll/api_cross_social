@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Docker
+        run: docker compose build
+
+      - name: Run pytest
+        run: docker compose run --rm web pytest
+
+      - name: Black check
+        run: docker compose run --rm web black --check .
+
+      - name: Isort check
+        run: docker compose run --rm web isort --check-only .
+
+      - name: Flake8
+        run: docker compose run --rm web flake8

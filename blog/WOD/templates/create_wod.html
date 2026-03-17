@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Montar WOD{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <div class="card border-0 shadow-lg rounded-4">
+        <div class="card-body p-5">
+
+          <h2 class="text-center fw-bold mb-4 text-primary">
+            🏋️‍♀️ Criar WOD
+          </h2>
+          <p class="text-muted text-center mb-5">
+            Preencha os campos abaixo para montar seu treino do dia.
+          </p>
+
+          <form method="post" id="wodForm">
+            {% csrf_token %}
+
+            <!-- TÍTULO DO WOD -->
+            <div class="mb-4">
+              {{ form.title.label_tag }}
+              {% render_field form.title class="form-control form-control-lg shadow-sm" placeholder="Ex: AMRAP 20" %}
+            </div>
+
+            <!-- DESCRIÇÃO -->
+            <div class="mb-4">
+              {{ form.description_wod.label_tag }}
+              {% render_field form.description_wod class="form-control shadow-sm" rows="8" placeholder="Digite aqui todo o conteúdo do WOD..." %}
+            </div>
+
+            <!-- ÁREA DE RESULTADOS -->
+            <h4 class="fw-semibold mt-5 mb-4 text-secondary text-center">
+              📊 CARGAS
+            </h4>
+
+            
+
+            <!-- FIXAR WOD -->
+            <div class="form-check form-switch mt-4 mb-4">
+              {% render_field form.pinned class="form-check-input" %}
+              <label class="form-check-label fw-semibold">📌 Fixar no topo</label>
+            </div>
+
+            <!-- BOTÃO -->
+            <div class="text-center mt-5">
+              <button type="submit" class="btn btn-gradient btn-lg px-5 shadow">
+                💾 Salvar WOD
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .btn-gradient {
+    background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%);
+    color: #fff;
+    border: none;
+    transition: 0.3s ease;
+  }
+
+  .btn-gradient:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+  }
+
+  textarea.form-control {
+    min-height: 180px;
+  }
+
+  .text-pink {
+    color: #e83e8c;
+  }
+</style>
+{% endblock %}

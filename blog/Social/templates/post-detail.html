@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalhe do Post</title>
+</head>
+<body>
+    <h1>Detalhe do Post</h1>
+
+    <p><strong>Autor:</strong> <span id="author"></span></p>
+    <p><strong>Texto:</strong> <span id="text"></span></p>
+
+    <h3>Imagens</h3>
+    <div id="imagens"></div>
+
+    <h3>Vídeos</h3>
+    <div id="videos"></div>
+
+    <script>
+        function loadPost() {
+            // 1️⃣ Pegar o ID do post da URL
+            const urlParts = window.location.pathname.split('/');
+            const postId = urlParts.filter(Boolean).pop(); // pega o último segmento
+
+            // 2️⃣ Fazer fetch na API
+            fetch(`/api/post/${postId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Autor e texto
+                    document.getElementById("author").textContent = data.author_username;
+                    document.getElementById("text").textContent = data.text;
+
+                    // 3️⃣ Renderizar imagens
+                    const imagensDiv = document.getElementById("imagens");
+                    imagensDiv.innerHTML = ""; // limpa caso já tenha algo
+                    data.imagens.forEach(url => {
+                        const img = document.createElement("img");
+                        img.src = url;
+                        img.width = 200;
+                        imagensDiv.appendChild(img);
+                    });
+
+                    // 4️⃣ Renderizar vídeos
+                    const videosDiv = document.getElementById("videos");
+                    videosDiv.innerHTML = "";
+                    data.videos.forEach(url => {
+                        const video = document.createElement("video");
+                        video.width = 300;
+                        video.controls = true;
+                        const source = document.createElement("source");
+                        source.src = url;
+                        video.appendChild(source);
+                        videosDiv.appendChild(video);
+                    });
+                })
+                .catch(error => console.error("Erro ao carregar post:", error));
+        }
+
+        // Chama a função quando a página carrega
+        window.addEventListener("DOMContentLoaded", loadPost);
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Editar Comentário - {{ post.title }}{% endblock %}
+
+{% block content %} 
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="id_texto" class="form-label">Texto do Comentário</label>
+                        {{ form.comment|add_class:"form-control" }}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                </form>
+            
+        </div>
+    </div>
+    <a href="{% url 'post-detail' comment.post.pk %}" class="btn btn-secondary mt-3">Voltar</a>
+</div>
+{% endblock %}

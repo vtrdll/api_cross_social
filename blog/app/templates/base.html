@@ -1,0 +1,1147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}CROSS SOCIAL{% endblock %}</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+  
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- FullCalendar CSS (se necessário) -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  
+  <!-- CrossFit Social Design System -->
+  <style>
+    /* ===========================================
+       CrossFit Social - Design System
+       =========================================== */
+    
+    :root {
+      /* Cores Primárias - Laranja Energético */
+      --primary: 15 90% 55%;
+      --primary-foreground: 0 0% 100%;
+      --primary-glow: 25 95% 60%;
+      
+      /* Background */
+      --background: 220 15% 8%;
+      --foreground: 210 20% 95%;
+      
+      /* Cards */
+      --card: 220 15% 12%;
+      --card-foreground: 210 20% 95%;
+      
+      /* Secondary */
+      --secondary: 220 15% 18%;
+      --secondary-foreground: 210 20% 95%;
+      
+      /* Muted */
+      --muted: 220 10% 25%;
+      --muted-foreground: 215 15% 60%;
+      
+      /* Border */
+      --border: 220 10% 20%;
+      
+      /* Accent */
+      --accent: 15 90% 55%;
+      --accent-foreground: 0 0% 100%;
+      
+      /* Destructive */
+      --destructive: 0 85% 60%;
+      --destructive-foreground: 0 0% 100%;
+      
+      /* Success */
+      --success: 145 70% 45%;
+      --success-foreground: 0 0% 100%;
+      
+      /* Ring */
+      --ring: 15 90% 55%;
+      
+      /* Radius */
+      --radius: 0.75rem;
+    }
+    
+    /* Light mode */
+    @media (prefers-color-scheme: light) {
+      :root {
+        --background: 30 20% 98%;
+        --foreground: 220 15% 15%;
+        --card: 0 0% 100%;
+        --card-foreground: 220 15% 15%;
+        --secondary: 30 15% 92%;
+        --secondary-foreground: 220 15% 15%;
+        --muted: 30 10% 85%;
+        --muted-foreground: 220 10% 45%;
+        --border: 30 15% 88%;
+      }
+    }
+    
+    /* Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      background-color: hsl(var(--background));
+      color: hsl(var(--foreground));
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    a {
+      color: hsl(var(--primary));
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    
+    a:hover {
+      opacity: 0.8;
+    }
+    
+    /* ===========================================
+       Header / Navbar
+       =========================================== */
+    
+    .navbar-cross {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background-color: hsl(var(--background) / 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid hsl(var(--border));
+      padding: 0.75rem 0;
+    }
+    
+    .navbar-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+    
+    .navbar-brand svg {
+      width: 2rem;
+      height: 2rem;
+      color: hsl(var(--primary));
+    }
+    
+    .navbar-brand-text {
+      font-size: 1.25rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    /* Search */
+    .navbar-search {
+      flex: 1;
+      max-width: 24rem;
+      position: relative;
+    }
+    
+    .navbar-search input {
+      width: 100%;
+      padding: 0.625rem 1rem 0.625rem 2.75rem;
+      background-color: hsl(var(--secondary));
+      border: 1px solid transparent;
+      border-radius: 9999px;
+      color: hsl(var(--foreground));
+      font-size: 0.875rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    
+    .navbar-search input:focus {
+      border-color: hsl(var(--primary));
+      box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2);
+    }
+    
+    .navbar-search input::placeholder {
+      color: hsl(var(--muted-foreground));
+    }
+    
+    .navbar-search .search-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1rem;
+      height: 1rem;
+      color: hsl(var(--muted-foreground));
+    }
+    
+    .navbar-search select {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: hsl(var(--secondary));
+      border: none;
+      color: hsl(var(--muted-foreground));
+      font-size: 0.75rem;
+      padding: 0.25rem;
+      border-radius: 0.375rem;
+      cursor: pointer;
+    }
+    
+    /* Nav Actions */
+    .navbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 9999px;
+      border: none;
+      background: transparent;
+      color: hsl(var(--foreground));
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    
+    .btn-icon:hover {
+      background-color: hsl(var(--secondary));
+    }
+    
+    .btn-icon.primary {
+      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+      color: hsl(var(--primary-foreground));
+    }
+    
+    .btn-icon.primary:hover {
+      opacity: 0.9;
+    }
+    
+    .btn-icon svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    
+    /* Avatar */
+    .avatar {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 9999px;
+      object-fit: cover;
+      border: 2px solid hsl(var(--primary) / 0.3);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .avatar:hover {
+      border-color: hsl(var(--primary));
+    }
+    
+    .avatar-lg {
+      width: 5rem;
+      height: 5rem;
+      border-width: 3px;
+    }
+    
+    .avatar-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+      color: hsl(var(--primary-foreground));
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    
+    .avatar-placeholder.avatar-lg {
+      font-size: 1.5rem;
+    }
+    
+    /* Mobile Menu Toggle */
+    .navbar-toggle {
+      display: none;
+    }
+    
+    @media (max-width: 768px) {
+      .navbar-search {
+        display: none;
+      }
+      
+      .navbar-toggle {
+        display: flex;
+      }
+      
+      .navbar-actions .hide-mobile {
+        display: none;
+      }
+    }
+    
+    /* ===========================================
+       Dropdown Menu
+       =========================================== */
+    
+    .dropdown-menu-cross {
+      background-color: hsl(var(--card));
+      border: 1px solid hsl(var(--border));
+      border-radius: var(--radius);
+      box-shadow: 0 10px 40px hsl(0 0% 0% / 0.3);
+      padding: 0.5rem;
+      min-width: 12rem;
+    }
+    
+    .dropdown-item-cross {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem 0.875rem;
+      border-radius: 0.5rem;
+      color: hsl(var(--foreground));
+      font-size: 0.875rem;
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    
+    .dropdown-item-cross:hover {
+      background-color: hsl(var(--secondary));
+      color: hsl(var(--foreground));
+    }
+    
+    .dropdown-item-cross svg {
+      width: 1rem;
+      height: 1rem;
+      color: hsl(var(--muted-foreground));
+    }
+    
+    .dropdown-item-cross.danger {
+      color: hsl(var(--destructive));
+    }
+    
+    .dropdown-item-cross.danger:hover {
+      background-color: hsl(var(--destructive) / 0.1);
+    }
+    
+    .dropdown-divider-cross {
+      height: 1px;
+      background-color: hsl(var(--border));
+      margin: 0.5rem 0;
+    }
+    
+    /* ===========================================
+       Sidebar / Offcanvas
+       =========================================== */
+    
+    .offcanvas-cross {
+      background-color: hsl(var(--card)) !important;
+      border-left: 1px solid hsl(var(--border)) !important;
+      color: hsl(var(--foreground));
+    }
+    
+    .offcanvas-header-cross {
+      border-bottom: 1px solid hsl(var(--border));
+      padding: 1.25rem;
+    }
+    
+    .offcanvas-title-cross {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: hsl(var(--foreground));
+    }
+    
+    .offcanvas-close {
+      background: transparent;
+      border: none;
+      color: hsl(var(--muted-foreground));
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s;
+    }
+    
+    .offcanvas-close:hover {
+      background-color: hsl(var(--secondary));
+      color: hsl(var(--foreground));
+    }
+    
+    /* Profile Card in Sidebar */
+    .profile-card {
+      background-color: hsl(var(--secondary) / 0.5);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin: 1rem;
+      text-align: center;
+    }
+    
+    .profile-card .avatar {
+      margin: 0 auto 0.75rem;
+    }
+    
+    .profile-card-name {
+      font-weight: 700;
+      font-size: 1rem;
+      color: hsl(var(--foreground));
+      margin-bottom: 0.25rem;
+    }
+    
+    .profile-card-email {
+      font-size: 0.75rem;
+      color: hsl(var(--muted-foreground));
+      margin-bottom: 1rem;
+    }
+    
+    .profile-card-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      text-align: left;
+    }
+    
+    .profile-card-stat {
+      background-color: hsl(var(--background));
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+    }
+    
+    .profile-card-stat-label {
+      color: hsl(var(--muted-foreground));
+    }
+    
+    .profile-card-stat-value {
+      color: hsl(var(--foreground));
+      font-weight: 600;
+    }
+    
+    .profile-card-teams {
+      margin-top: 1rem;
+      text-align: left;
+    }
+    
+    .profile-card-teams-title {
+      font-size: 0.75rem;
+      color: hsl(var(--muted-foreground));
+      margin-bottom: 0.5rem;
+    }
+    
+    .team-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.625rem;
+      background-color: hsl(var(--primary) / 0.1);
+      color: hsl(var(--primary));
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-right: 0.375rem;
+      margin-bottom: 0.375rem;
+    }
+    
+    .profile-card-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    /* Sidebar Nav */
+    .sidebar-nav {
+      padding: 0.5rem;
+    }
+    
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      color: hsl(var(--foreground));
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    
+    .sidebar-nav-item:hover {
+      background-color: hsl(var(--secondary));
+      color: hsl(var(--foreground));
+    }
+    
+    .sidebar-nav-item.active {
+      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+      color: hsl(var(--primary-foreground));
+    }
+    
+    .sidebar-nav-item svg {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+    
+    .sidebar-section-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: hsl(var(--muted-foreground));
+      padding: 1rem 1rem 0.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    /* ===========================================
+       Main Content
+       =========================================== */
+    
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 5rem;
+    }
+    
+    .main-content.narrow {
+      max-width: 672px;
+    }
+    
+    /* ===========================================
+       Cards
+       =========================================== */
+    
+    .card-cross {
+      background-color: hsl(var(--card));
+      border-radius: var(--radius);
+      border: 1px solid hsl(var(--border));
+      box-shadow: 0 4px 20px hsl(0 0% 0% / 0.1);
+      overflow: hidden;
+    }
+    
+    .card-header-cross {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid hsl(var(--border));
+    }
+    
+    .card-body-cross {
+      padding: 1.25rem;
+    }
+    
+    .card-footer-cross {
+      padding: 1rem 1.25rem;
+      border-top: 1px solid hsl(var(--border));
+      background-color: hsl(var(--secondary) / 0.3);
+    }
+    
+    /* ===========================================
+       Buttons
+       =========================================== */
+    
+    .btn-cross {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      text-decoration: none;
+    }
+    
+    .btn-cross svg {
+      width: 1rem;
+      height: 1rem;
+    }
+    
+    .btn-primary-cross {
+      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+      color: hsl(var(--primary-foreground));
+    }
+    
+    .btn-primary-cross:hover {
+      opacity: 0.9;
+      color: hsl(var(--primary-foreground));
+    }
+    
+    .btn-secondary-cross {
+      background-color: hsl(var(--secondary));
+      color: hsl(var(--secondary-foreground));
+    }
+    
+    .btn-secondary-cross:hover {
+      background-color: hsl(var(--muted));
+    }
+    
+    .btn-outline-cross {
+      background: transparent;
+      border: 1px solid hsl(var(--border));
+      color: hsl(var(--foreground));
+    }
+    
+    .btn-outline-cross:hover {
+      background-color: hsl(var(--secondary));
+      color: hsl(var(--foreground));
+    }
+    
+    .btn-danger-cross {
+      background-color: hsl(var(--destructive));
+      color: hsl(var(--destructive-foreground));
+    }
+    
+    .btn-danger-cross:hover {
+      opacity: 0.9;
+    }
+    
+    .btn-success-cross {
+      background-color: hsl(var(--success));
+      color: hsl(var(--success-foreground));
+    }
+    
+    .btn-sm-cross {
+      padding: 0.375rem 0.875rem;
+      font-size: 0.75rem;
+    }
+    
+    .btn-lg-cross {
+      padding: 0.875rem 1.75rem;
+      font-size: 1rem;
+    }
+    
+    .btn-block {
+      width: 100%;
+    }
+    
+    /* ===========================================
+       Forms
+       =========================================== */
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .form-label-cross {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: hsl(var(--foreground));
+      margin-bottom: 0.5rem;
+    }
+    
+    .form-input-cross {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: hsl(var(--secondary));
+      border: 1px solid hsl(var(--border));
+      border-radius: 0.5rem;
+      color: hsl(var(--foreground));
+      font-size: 0.875rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+    
+    .form-input-cross:focus {
+      border-color: hsl(var(--primary));
+      box-shadow: 0 0 0 3px hsl(var(--primary) / 0.2);
+    }
+    
+    .form-input-cross::placeholder {
+      color: hsl(var(--muted-foreground));
+    }
+    
+    textarea.form-input-cross {
+      min-height: 100px;
+      resize: vertical;
+    }
+    
+    .form-select-cross {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      padding-right: 2.5rem;
+    }
+    
+    /* ===========================================
+       Badges
+       =========================================== */
+    
+    .badge-cross {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .badge-primary-cross {
+      background-color: hsl(var(--primary) / 0.1);
+      color: hsl(var(--primary));
+    }
+    
+    .badge-secondary-cross {
+      background-color: hsl(var(--secondary));
+      color: hsl(var(--secondary-foreground));
+    }
+    
+    .badge-success-cross {
+      background-color: hsl(var(--success) / 0.1);
+      color: hsl(var(--success));
+    }
+    
+    .badge-danger-cross {
+      background-color: hsl(var(--destructive) / 0.1);
+      color: hsl(var(--destructive));
+    }
+    
+    /* ===========================================
+       Footer
+       =========================================== */
+    
+    .footer-cross {
+      background-color: hsl(var(--card));
+      border-top: 1px solid hsl(var(--border));
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.875rem;
+      color: hsl(var(--muted-foreground));
+    }
+    
+    /* ===========================================
+       Utilities
+       =========================================== */
+    
+    .text-muted-cross {
+      color: hsl(var(--muted-foreground));
+    }
+    
+    .text-primary-cross {
+      color: hsl(var(--primary));
+    }
+    
+    .gradient-text {
+      background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .verified-badge {
+      width: 1rem;
+      height: 1rem;
+      color: hsl(200 90% 50%);
+    }
+    
+    /* Personal Records Section */
+    .pr-section {
+      margin-top: 1rem;
+    }
+    
+    .pr-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: hsl(var(--muted-foreground));
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+    
+    .pr-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.375rem;
+    }
+    
+    .pr-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0.75rem;
+      background-color: hsl(var(--background));
+      border-radius: 0.375rem;
+      font-size: 0.75rem;
+    }
+    
+    .pr-item-name {
+      color: hsl(var(--foreground));
+    }
+    
+    .pr-item-value {
+      color: hsl(var(--primary));
+      font-weight: 600;
+    }
+    
+    /* Bootstrap Overrides for Dark Theme */
+    .modal-content {
+      background-color: hsl(var(--card));
+      border: 1px solid hsl(var(--border));
+      color: hsl(var(--foreground));
+    }
+    
+    .modal-header {
+      border-bottom-color: hsl(var(--border));
+    }
+    
+    .modal-footer {
+      border-top-color: hsl(var(--border));
+    }
+    
+    .btn-close {
+      filter: invert(1);
+    }
+    
+    /* Animations */
+    @keyframes slide-up {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .animate-slide-up {
+      animation: slide-up 0.5s ease-out;
+    }
+    
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .animate-fade-in {
+      animation: fade-in 0.3s ease-out;
+    }
+  </style>
+  
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <!-- =========================================== 
+       Navbar 
+       =========================================== -->
+  <nav class="navbar-cross">
+    <div class="navbar-container">
+      <!-- Logo -->
+      <a href="{% url 'home' %}" class="navbar-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6.5 6.5m-3.5 0a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0 -7 0"/>
+          <path d="M2.5 21v-4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4"/>
+          <path d="M14 3l7 7"/>
+          <path d="M14 10l7-7"/>
+          <path d="M10 17.5a3.5 3.5 0 1 0 7 0a3.5 3.5 0 1 0-7 0"/>
+        </svg>
+        <span class="navbar-brand-text">CROSS SOCIAL</span>
+      </a>
+      
+      {% if user.is_authenticated %}
+      <!-- Search -->
+      <form id="searchForm" action="{% url 'home' %}" method="GET" class="navbar-search">
+        <i data-lucide="search" class="search-icon"></i>
+        <input type="text" name="q" placeholder="Buscar posts ou atletas..." autocomplete="off">
+        <select id="searchType">
+          <option value="post">Post</option>
+          <option value="user">Usuário</option>
+        </select>
+      </form>
+      {% endif %}
+      
+      <!-- Actions -->
+      <div class="navbar-actions">
+        {% if user.is_authenticated %}
+          <!-- Create Menu -->
+          <div class="dropdown">
+            <button class="btn-icon primary" data-bs-toggle="dropdown" aria-expanded="false" title="Criar">
+              <i data-lucide="plus"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-cross">
+              <li>
+                <a class="dropdown-item-cross" href="{% url 'time_create' %}">
+                  <i data-lucide="users"></i>
+                  Criar Time
+                </a>
+              </li>
+              {% if user.profile.is_coach %}
+              <li>
+                <a class="dropdown-item-cross" href="{% url 'wod_create' %}">
+                  <i data-lucide="dumbbell"></i>
+                  Postar WOD
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item-cross" href="{% url 'event_create' %}">
+                  <i data-lucide="calendar-plus"></i>
+                  Novo Evento
+                </a>
+              </li>
+              {% endif %}
+              <li>
+                <a class="dropdown-item-cross" href="{% url 'post_create' %}">
+                  <i data-lucide="image-plus"></i>
+                  Criar Post
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Notifications -->
+          <button class="btn-icon hide-mobile" title="Notificações">
+            <i data-lucide="bell"></i>
+          </button>
+          
+          <!-- User Menu -->
+          <div class="dropdown">
+            {% if user.profile.photo %}
+              <img src="{{ user.profile.photo.url }}" alt="{{ user.username }}" class="avatar" data-bs-toggle="dropdown">
+            {% else %}
+              <div class="avatar avatar-placeholder" data-bs-toggle="dropdown">
+                {{ user.username|slice:":1"|upper }}
+              </div>
+            {% endif %}
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-cross">
+              <li>
+                <a class="dropdown-item-cross" href="{% url 'my_perfil' %}">
+                  <i data-lucide="user"></i>
+                  Meu Perfil
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item-cross" href="{% url 'event_list' %}">
+                  <i data-lucide="calendar"></i>
+                  Eventos
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item-cross" href="">
+                  <i data-lucide="mail"></i>
+                  Contato
+                </a>
+              </li>
+              <li><hr class="dropdown-divider-cross"></li>
+              <li>
+                <a class="dropdown-item-cross danger" href="{% url 'logout' %}">
+                  <i data-lucide="log-out"></i>
+                  Sair
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Mobile Menu Toggle -->
+          <button class="btn-icon navbar-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+            <i data-lucide="menu"></i>
+          </button>
+        {% else %}
+          <a href="{% url 'home' %}" class="btn-cross btn-outline-cross btn-sm-cross">Início</a>
+          <a href="{% url 'login' %}" class="btn-cross btn-outline-cross btn-sm-cross">Login</a>
+          <a href="{% url 'signup' %}" class="btn-cross btn-primary-cross btn-sm-cross">Cadastro</a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+  
+  <!-- =========================================== 
+       Sidebar (Mobile) 
+       =========================================== -->
+  {% if user.is_authenticated %}
+  <div class="offcanvas offcanvas-end offcanvas-cross" tabindex="-1" id="sidebarMenu">
+    <div class="offcanvas-header offcanvas-header-cross">
+      <h5 class="offcanvas-title-cross">Menu</h5>
+      <button type="button" class="offcanvas-close" data-bs-dismiss="offcanvas">
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+    <div class="offcanvas-body p-0">
+      <!-- Profile Card -->
+      <div class="profile-card">
+        {% if user.profile.photo %}
+          <img src="{{ user.profile.photo.url }}" alt="{{ user.username }}" class="avatar avatar-lg">
+        {% else %}
+          <div class="avatar avatar-lg avatar-placeholder">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+        {% endif %}
+        <p class="profile-card-name">{{ user.username }}</p>
+        <p class="profile-card-email">{{ user.email }}</p>
+        
+        <div class="profile-card-stats">
+          {% if user.profile.view_weight %}
+          <div class="profile-card-stat">
+            <span class="profile-card-stat-label">Peso</span>
+            <span class="profile-card-stat-value">{{ user.profile.weight }}kg</span>
+          </div>
+          {% endif %}
+          {% if user.profile.view_height %}
+          <div class="profile-card-stat">
+            <span class="profile-card-stat-label">Altura</span>
+            <span class="profile-card-stat-value">{{ user.profile.height }}</span>
+          </div>
+          {% endif %}
+          {% if user.profile.view_box %}
+          <div class="profile-card-stat">
+            <span class="profile-card-stat-label">Box</span>
+            <span class="profile-card-stat-value">{{ user.profile.box }}</span>
+          </div>
+          {% endif %}
+          {% if user.profile.view_category %}
+          <div class="profile-card-stat">
+            <span class="profile-card-stat-label">Categoria</span>
+            <span class="profile-card-stat-value">{{ user.profile.category }}</span>
+          </div>
+          {% endif %}
+        </div>
+        
+        {% if user.times_criados.all %}
+        <div class="profile-card-teams">
+          <p class="profile-card-teams-title">Meus Times</p>
+          {% for time in user.times_criados.all %}
+            <span class="team-badge">{{ time.name }}</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% if user.profile.view_personal_record %}
+        <div class="pr-section">
+          <p class="pr-title">
+            <i data-lucide="trophy" style="width: 0.875rem; height: 0.875rem;"></i>
+            Recordes Pessoais
+          </p>
+          <div class="pr-list">
+            {% for pr in request.user.profilepersonalrecord_set.all %}
+              <div class="pr-item">
+                <span class="pr-item-name">{{ pr.moviment }}</span>
+                <span class="pr-item-value">{{ pr.personal_record }}kg</span>
+              </div>
+            {% empty %}
+              <p class="text-muted-cross" style="font-size: 0.75rem;">Nenhum PR cadastrado.</p>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        
+        <div class="profile-card-actions">
+          <a href="{% url 'user_update' %}" class="btn-cross btn-outline-cross btn-sm-cross btn-block">
+            <i data-lucide="settings"></i>
+            Editar
+          </a>
+          <a href="{% url 'list_pr' %}" class="btn-cross btn-primary-cross btn-sm-cross btn-block">
+            <i data-lucide="dumbbell"></i>
+            PRs
+          </a>
+        </div>
+      </div>
+      
+      <!-- Navigation -->
+      <nav class="sidebar-nav">
+        <p class="sidebar-section-title">Navegação</p>
+        <a href="{% url 'home' %}" class="sidebar-nav-item">
+          <i data-lucide="home"></i>
+          Feed
+        </a>
+        <a href="{% url 'event_list' %}" class="sidebar-nav-item">
+          <i data-lucide="calendar"></i>
+          Eventos
+        </a>
+        <a href="{% url 'my_perfil' %}" class="sidebar-nav-item">
+          <i data-lucide="user"></i>
+          Meu Perfil
+        </a>
+        <a href="" class="sidebar-nav-item">
+          <i data-lucide="mail"></i>
+          Contato
+        </a>
+        
+        <p class="sidebar-section-title">Criar</p>
+        <a href="{% url 'time_create' %}" class="sidebar-nav-item">
+          <i data-lucide="users"></i>
+          Criar Time
+        </a>
+        {% if user.profile.is_coach %}
+        <a href="{% url 'wod_create' %}" class="sidebar-nav-item">
+          <i data-lucide="dumbbell"></i>
+          Postar WOD
+        </a>
+        <a href="{% url 'event_create' %}" class="sidebar-nav-item">
+          <i data-lucide="calendar-plus"></i>
+          Novo Evento
+        </a>
+        {% endif %}
+        <a href="{% url 'post_create' %}" class="sidebar-nav-item">
+          <i data-lucide="image-plus"></i>
+          Criar Post
+        </a>
+        
+        <p class="sidebar-section-title">Conta</p>
+        <a href="{% url 'logout' %}" class="sidebar-nav-item" style="color: hsl(var(--destructive));">
+          <i data-lucide="log-out"></i>
+          Sair
+        </a>
+      </nav>
+    </div>
+  </div>
+  {% endif %}
+  
+  <!-- =========================================== 
+       Main Content 
+       =========================================== -->
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+  
+  <!-- =========================================== 
+       Footer 
+       =========================================== -->
+  <footer class="footer-cross">
+    <p>&copy; {{ year|default:2025 }} <span class="gradient-text">CROSS SOCIAL</span>. Todos os direitos reservados.</p>
+  </footer>
+  
+  <!-- =========================================== 
+       Scripts 
+       =========================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+    
+    // Search type toggle
+    document.getElementById('searchType')?.addEventListener('change', function() {
+      const form = document.getElementById('searchForm');
+      form.action = this.value === 'user' ? "{% url 'user_list' %}" : "{% url 'home' %}";
+    });
+  </script>
+  
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
