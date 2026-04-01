@@ -48,7 +48,7 @@ const Home = () => {
 
       {/* WOD fixado */}
       {pinnedWod && <WodCard wod={pinnedWod} onLike={toggleWodLike} />}
-
+      
       {/* Feed */}
       <div className="divide-y divide-border">
         {posts.map((post) => (

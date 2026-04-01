@@ -4,13 +4,27 @@ from account.models import User,  Profile, Box, ProfilePersonalRecord
 from WOD.models import Movement
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-
 class CreateUserSerializer(serializers.ModelSerializer):
+    password1 = serializers.CharField(write_only=True)
+    password2 = serializers.CharField(write_only=True)
+
     class Meta:
-        model = User 
-        fields = ['username','first_name','last_name', 'email', 'password1', 'password2']
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
 
+    def validate(self, data):
+        if data['password1'] != data['password2']:
+            raise serializers.ValidationError("Passwords must match")
+        return data
 
+    def create(self, validated_data):
+        password = validated_data.pop('password1')
+        validated_data.pop('password2', None)
+        user = User.objects.create(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
+    
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exists():
@@ -24,39 +38,24 @@ class CreateUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('Email já existe')
         return email
     
-
-class CreateProfileSerializer(serializers.ModelSerializer):
-
-    birthday = data = serializers.DateField(
-    format="%d/%m/%Y",              # como será exibido na resposta
-    input_formats=["%d/%m/%Y"]      # como será aceito na requisição
-)
-    class Meta:
-        model = Profile
-        fields = ['photo','birthday', 'category', 'box', 'genre', 'weight', 'height', ]
-
-
-    def clean_birthday (self):
-        value = self.cleaned_data.get('birthday')
     
 
-        if  value.year <  1925 or value.year > datetime.datetime.now().year:
-            raise serializers.ValidationError( 'DATA INVALIDA')
-        return value
-        
+class CreateProfileSerializer(serializers.ModelSerializer):
+    birthday = serializers.DateField(
+        format="%d/%m/%Y",
+        input_formats=["%d/%m/%Y", "%Y-%m-%d"]
+    )
+    weight = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True)
+    height = serializers.DecimalField(max_digits=5, decimal_places=2, required=False, allow_null=True)
+    box = serializers.PrimaryKeyRelatedField(queryset=Box.objects.all(), required=False, allow_null=True)
+    photo = serializers.ImageField(required=False, allow_null=True)
+    
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password']
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']
-        )
-        return user
- 
+        model = Profile
+        fields = [
+            "photo", "birthday", "category", "box", "genre",
+            "weight", "height"
+        ]
  
 class UserUpdateSerializer(serializers.ModelSerializer):
     box = serializers.PrimaryKeyRelatedField(
@@ -179,7 +178,7 @@ class PersonalRecordSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfilePersonalRecord
         fields = ['id','moviment','date','personal_record','name_moviment' ]
-        read_only_fields = ["athlete", 'id', 'name_moviment']
+        read_only_fields = ["athlete", 'id''name_moviment']
 
 
 class UserNestedSerializer(serializers.ModelSerializer):

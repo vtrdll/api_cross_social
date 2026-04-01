@@ -6,7 +6,7 @@ export const usePosts = (authorFilter?: string) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [nextPage, setNextPage] = useState<string | null>(null);
-
+  
   const fetchPosts = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -24,7 +24,7 @@ export const usePosts = (authorFilter?: string) => {
   }, [authorFilter]);
 
   useEffect(() => { fetchPosts(); }, [fetchPosts]);
-
+        
   const toggleLike = useCallback(async (postId: number) => {
     // Optimistic update
     setPosts(prev =>
@@ -79,19 +79,24 @@ export const usePosts = (authorFilter?: string) => {
     });
     return data;
   }, []);
-
+  
   const loadMore = useCallback(async () => {
     if (!nextPage) return;
     setIsLoading(true);
+    
     try {
+      
       const { data } = await api.get(nextPage);
+      
       setPosts(prev => [...prev, ...(data.results || data)]);
+      
       setNextPage(data.next || null);
     } catch (err) {
       console.error('Failed to load more', err);
     } finally {
       setIsLoading(false);
     }
+    
   }, [nextPage]);
 
   return { posts, isLoading, toggleLike, addComment, deletePost, createPost, loadMore, hasMore: !!nextPage, refetch: fetchPosts };

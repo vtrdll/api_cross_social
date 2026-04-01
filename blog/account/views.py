@@ -29,14 +29,22 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticate
 
 class RegisterAPIView(APIView):
     def post(self, request):
-        user_serializer = CreateUserSerializer(request.data)
-        profile_serializer = CreateProfileSerializer(request.data)
+        print("Request data:", request.data)
+        user_serializer = CreateUserSerializer(data=request.data)
+        profile_serializer = CreateProfileSerializer(data=request.data)
 
-        if user_serializer.is_valid() and profile_serializer.is_valid():
+
+        # Chama is_valid separadamente
+        user_valid = user_serializer.is_valid()
+        profile_valid = profile_serializer.is_valid()
+        print("User valid?", user_serializer.is_valid())
+        print("User errors:", user_serializer.errors)
+        
+        print("Profile valid?", profile_serializer.is_valid())
+        print("Profile errors:", profile_serializer.errors)
+        if user_valid and profile_valid:
             user = user_serializer.save()
-            profile = profile_serializer.save(commit=False)
-            profile.user = user
-            profile.save()
+            profile = profile_serializer.save(user=user)
             return Response({"message": "User registered successfully"}, status=201)
         
         errors = {

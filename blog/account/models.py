@@ -33,7 +33,7 @@ class Profile (models.Model):
     weight = models.DecimalField(max_digits= 5, decimal_places = 2, validators=[MaxValueValidator (300), MinValueValidator(0)], default=0, verbose_name="Peso")
     height = models.DecimalField(max_digits= 5, decimal_places = 2,  default=0, verbose_name="Altura")
     category = models.CharField(choices= CATEGORY_CHOICES, default= 'EXPERIMENTAL', verbose_name="Categoria")
-    box = models.ForeignKey(Box, default = 'DEFAULT', on_delete=models.CASCADE, blank=True, null= True, related_name="box")
+    box = models.ForeignKey(Box, on_delete=models.CASCADE, blank=True, null= True, related_name="box")
     is_coach = models.BooleanField(default=False, verbose_name= "Coach ? ")
     
     def __str__(self):

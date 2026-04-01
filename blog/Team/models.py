@@ -8,7 +8,7 @@ class Team(models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Creator Team', related_name= 'creator_team')
     name = models.CharField(max_length=50, verbose_name= 'name_team', blank=False,  null= False, )
     description = models.CharField(max_length=500, verbose_name="Descripion")
-    box = models.ForeignKey(Box, on_delete=models.CASCADE, default = 'DEFAULT')
+    box = models.ForeignKey(Box, on_delete=models.CASCADE, null=True, blank=True)
     category = models.CharField(choices= Profile.CATEGORY_CHOICES, default= 'EXPERIMENTAL', verbose_name="category_team")
     members = models.ManyToManyField(User, related_name='team_members', verbose_name='members')
 

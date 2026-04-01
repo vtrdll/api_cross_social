@@ -42,7 +42,10 @@ const Profile = () => {
               {profile.view_box && profile.box && <p className="text-xs text-primary mt-1">📍 {profile.box_name}</p>}
               {profile.view_weight && profile.weight && <p className="text-xs text-muted-foreground">{profile.weight} kg</p>}
               {profile.view_height && profile.height && <p className="text-xs text-muted-foreground">{profile.height} cm</p>}
-              {profile.category && <p className="text-xs text-muted-foreground">Categoria: {profile.category}</p>}
+
+              {profile.view_category && profile.category && <p className="text-xs text-muted-foreground">Categoria: {profile.category}</p>}
+
+              
             </div>
           </div>
 
@@ -104,31 +107,46 @@ const Profile = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 text-muted-foreground text-sm">Nenhum post ainda</div>
+            <div className="text-center pZy-12 text-muted-foreground text-sm">Nenhum post ainda</div>
           )
         )}
 
         {activeTab === 'prs' && (
-          prsLoading ? (
-            <div className="p-8 text-center text-muted-foreground">Carregando PRs...</div>
-          ) : records.length > 0 ? (
-            <div className="p-4 space-y-3">
-              {records.map((pr) => (
-                <div key={pr.id} className="flex items-center justify-between rounded-lg border border-border bg-card p-3 hover:border-primary/30 transition-colors">
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{pr.name_moviment}</p>
-                    <p className="text-xs text-muted-foreground">{pr.date}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-primary">{pr.personal_record}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 text-muted-foreground text-sm">Nenhum PR cadastrado</div>
-          )
-        )}
+  prsLoading ? (
+    <div className="p-8 text-center text-muted-foreground">
+      Carregando PRs...
+    </div>
+  ) : !profile.view_personal_record ? (
+    <div className="text-center py-12 text-muted-foreground text-sm">
+      O usuário preferiu manter os PRs privados
+    </div>
+  ) : records.length > 0 ? (
+    <div className="p-4 space-y-3">
+      {records.map((pr) => (
+        <div
+          key={pr.id}
+          className="flex items-center justify-between rounded-lg border border-border bg-card p-3 hover:border-primary/30 transition-colors"
+        >
+          <div>
+            <p className="text-sm font-semibold text-foreground">
+              {pr.name_moviment}
+            </p>
+            <p className="text-xs text-muted-foreground">{pr.date}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-lg font-bold text-primary">
+              {pr.personal_record}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  ) : (
+    <div className="text-center py-12 text-muted-foreground text-sm">
+      Nenhum PR cadastrado
+    </div>
+  )
+)}
 
         {activeTab === 'teams' && (
           teams.length > 0 ? (

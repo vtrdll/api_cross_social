@@ -14,11 +14,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.urls import path
+from django.urls import path, include 
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from WOD.views import CreateWodAPIVIEW, ListWodAPIView, MovementViewSet
 from Social.views import my_profile, HomeAPIView,  PostCreateViewAPI, StoryViewAPIView, PostDeteailViewAPI, PostUpdateDeleteViewAPI, CommentCreateViewAPI, CommentListUserView, CommentListUserDeleteOrUpdateViewAPI, LikePostViewAPI, LikeCommentViewAPI, StoryCreateViewAPI, StoryCreateViewTeamplate, StoryDeleteViewAPI, MyProfileAPI
 from Social.views import HomeTemplateView, PostCreateViewAPITemplate,  PostUpdateDeleteViewAPI, PostListViewAPI, StoryListViewAPI
 from account.views import LoginAPIView, LogoutAPIView, UserUpdatePhotoAPIView, RegisterPersonalRecordAPIView, MeView, PrivacyListAPIView
@@ -44,6 +43,7 @@ urlpatterns = [
     path('api/update-delete/<int:pk>/', PostUpdateDeleteViewAPI.as_view(), name='post_update_delete_api' ),
     path('api/post/<int:pk>/like/', LikePostViewAPI.as_view(), name='post_like_api'),
     
+    path('api/v1/', include('WOD.api_urls')),
     
     path('api/<int:pk>/comment/', CommentCreateViewAPI.as_view(), name='comment_create_api' ),
     path('api/comment/like/<int:pk>/', LikeCommentViewAPI.as_view(), name='comment_like_api' ),
@@ -71,7 +71,7 @@ urlpatterns = [
     path('api/privacy/',PrivacyConfigAPIView.as_view(), name='privacy_api'),
 
    
-    path('api/list_moviment/', MovementViewSet.as_view(), name='moviment_list_api'),
+
     path('api/create_pr/',RegisterPersonalRecordAPIView.as_view(), name='create_pr_api'),
     path('api/list_pr/',  PersonalRecordListAPIView.as_view(), name='list_Pr_api'),
     path('api/update_pr/<int:pk>/',UpdatePergonalRecordAPIView.as_view(),name='update_pr'),
@@ -91,8 +91,6 @@ urlpatterns = [
     
     #path('story/<int:pk>/', StoryDetailView.as_view(), name='story_detail'),
 
-    path('api/create_wod/',CreateWodAPIVIEW.as_view(), name='create_wod_api'),
-    path('api/wod_list/', ListWodAPIView.as_view(), name='wod_list_api'),
   
     path("stories/<int:pk>/view/", StoryViewAPIView.as_view(), name="story_view"),
 

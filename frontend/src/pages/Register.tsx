@@ -7,31 +7,56 @@ const Register = () => {
   const { register, isLoading } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    username: '', first_name: '', last_name: '', email: '', password: '', password_confirm: '',
-    box: '', weight: '', height: '', gender: '', date_of_birth: '',
+    username: '',
+    email: '',
+    password1: '',
+    password2: '',
+    photo: null,
+    birthday: '',
+    category: '',
+    box: '',
+    genre: '',
+    weight: '',
+    height: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const update = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    if (!form.username || !form.email || !form.password) {
+    if (!form.username || !form.email || !form.password1) {
       setError('Preencha os campos obrigatórios');
       return;
     }
-    if (form.password !== form.password_confirm) {
+    if (form.password1 !== form.password2) {
       setError('As senhas não coincidem');
       return;
     }
-    if (form.password.length < 6) {
+    if (form.password1.length < 6) {
       setError('A senha deve ter pelo menos 6 caracteres');
       return;
     }
+    // Monta o payload conforme solicitado
+    // Ajusta birthday para DD/MM/YYYY e box para número
+    let birthday = form.birthday;
+    // Se vier em formato yyyy-mm-dd, converte para dd/mm/yyyy
+    if (/^\d{4}-\d{2}-\d{2}$/.test(birthday)) {
+      const [y, m, d] = birthday.split('-');
+      birthday = `${d}/${m}/${y}`;
+    }
+    const payload = { 
+      ...form, 
+      birthday: birthday,
+      photo: form.photo || null,
+      box: form.box ? Number(form.box) : null,
+      weight: form.weight ? Number(form.weight) : null,
+      height: form.height ? Number(form.height) : null,
+    };
     try {
-      await register(form);
+      await register(payload);
       navigate('/');
     } catch {
       setError('Erro ao criar conta');
@@ -53,30 +78,39 @@ const Register = () => {
 
         <form onSubmit={handleSubmit} className="space-y-3">
           <input value={form.username} onChange={e => update('username', e.target.value)} placeholder="Username *" className={inputClass} />
-          <div className="grid grid-cols-2 gap-3">
-            <input value={form.first_name} onChange={e => update('first_name', e.target.value)} placeholder="Nome" className={inputClass} />
-            <input value={form.last_name} onChange={e => update('last_name', e.target.value)} placeholder="Sobrenome" className={inputClass} />
-          </div>
+          
           <input type="email" value={form.email} onChange={e => update('email', e.target.value)} placeholder="Email *" className={inputClass} />
           <input value={form.box} onChange={e => update('box', e.target.value)} placeholder="Box (academia)" className={inputClass} />
-          <input type="date" value={form.date_of_birth} onChange={e => update('date_of_birth', e.target.value)} className={inputClass} />
+          <select value={form.category} onChange={e => update('category', e.target.value)} className={inputClass}>
+            <option value="">Categoria</option>
+            <option value="FITNESS">FITNESS</option>
+            <option value="SCALED">SCALED</option>
+            <option value="AMADOR">AMADOR</option>
+            <option value="RX">RX</option>
+            <option value="MASTER">MASTER</option>
+          </select>
+          <input
+  type="date"
+  value={form.birthday}
+  onChange={e => update('birthday', e.target.value)}
+  className={inputClass}
+/>
           <div className="grid grid-cols-3 gap-3">
             <input value={form.weight} onChange={e => update('weight', e.target.value)} placeholder="Peso (kg)" className={inputClass} />
             <input value={form.height} onChange={e => update('height', e.target.value)} placeholder="Altura (cm)" className={inputClass} />
-            <select value={form.gender} onChange={e => update('gender', e.target.value)} className={inputClass}>
+            <select value={form.genre} onChange={e => update('genre', e.target.value)} className={inputClass}>
               <option value="">Gênero</option>
-              <option value="M">Masculino</option>
-              <option value="F">Feminino</option>
-              <option value="O">Outro</option>
+              <option value="MASCULINO">Masculino</option>
+              <option value="FEMININO">Feminino</option>
             </select>
           </div>
           <div className="relative">
-            <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={e => update('password', e.target.value)} placeholder="Senha *" className={`${inputClass} pr-12`} />
+            <input type={showPassword ? 'text' : 'password'} value={form.password1} onChange={e => update('password1', e.target.value)} placeholder="Senha *" className={`${inputClass} pr-12`} />
             <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
-          <input type={showPassword ? 'text' : 'password'} value={form.password_confirm} onChange={e => update('password_confirm', e.target.value)} placeholder="Confirmar senha *" className={inputClass} />
+          <input type={showPassword ? 'text' : 'password'} value={form.password2} onChange={e => update('password2', e.target.value)} placeholder="Confirmar senha *" className={inputClass} />
 
           {error && <p className="text-sm text-destructive animate-slide-up">{error}</p>}
 

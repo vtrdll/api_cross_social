@@ -7,8 +7,8 @@ from django.core.validators import  MinValueValidator
 
 class Event(models.Model):
     author = models.ForeignKey(User, on_delete= models.CASCADE)
-    location  = models.CharField (max_length=50, default= 'null')
-    title =  models.CharField (max_length=50, default= 'null')
+    location  = models.CharField (max_length=50, null=True,  blank=True)
+    title =  models.CharField (max_length=50, null=True,  blank=True)
     link =  models.URLField(max_length=100, blank= True, null= True )
     text = models.CharField(max_length=3000, blank=  True, null= True)
     date_initial = models.DateTimeField( default=  timezone.now())

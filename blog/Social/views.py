@@ -58,7 +58,7 @@ class PostCreateViewAPI(APIView):
  
 
 class PostListViewAPI(ListAPIView):
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by('-created_at') 
     serializer_class  = PostSerializer
 
 
@@ -79,7 +79,7 @@ class HomeAPIView(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get(self, request):
-        posts = Post.objects.all().order_by('-created_at')
+        posts = Post.objects.all().order_by('-created_at') 
         posts_serializer = PostSerializer(
             posts, many=True, context={'request': request}
         )

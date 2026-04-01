@@ -94,7 +94,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, currentUserProfile, onLike, o
           {allMedia[imageIndex]?.type === 'image' ? (
             <img src={allMedia[imageIndex].url} alt="Post" className="h-full w-full object-cover" />
           ) : allMedia[imageIndex]?.type === 'video' ? (
-            <video src={allMedia[imageIndex].url} controls className="h-full w-full object-cover" />
+            <video
+  src={allMedia[imageIndex].url}
+  controls
+  className="h-full w-full object-contain"
+/>
           ) : null}
           {allMedia.length > 1 && (
             <>

@@ -88,10 +88,30 @@ const Privacy = () => {
                 </div>
               </button>
             ))}
-            <button onClick={handleSave} disabled={saving}
-              className="w-full rounded-lg gradient-fire py-3 text-sm font-semibold text-primary-foreground disabled:opacity-50 flex items-center justify-center gap-2 mt-4">
-              <Save className="h-4 w-4" /> {saving ? 'Salvando...' : 'Salvar Privacidade'}
-            </button>
+            <button
+  onClick={handleSave}
+  disabled={saving}
+  className="w-full rounded-lg gradient-fire py-3 text-sm font-semibold text-primary-foreground disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
+>
+  <Save className="h-4 w-4" />
+  {saving ? 'Salvando...' : 'Salvar Privacidade'}
+</button>
+
+<button
+  onClick={() => navigate('/settings/password')}
+  className="w-full rounded-lg border border-border py-3 text-sm font-semibold text-foreground flex items-center justify-center gap-2 hover:bg-muted transition-colors"
+>
+  <Shield className="h-4 w-4" />
+  Alterar senha
+</button>
+
+<button
+  onClick={() => navigate('/settings/password')}
+  className="w-full rounded-lg border border-border py-3 text-sm font-semibold text-foreground flex items-center justify-center gap-2 hover:bg-muted transition-colors"
+>
+  <Shield className="h-4 w-4" />
+  Deletar Conta
+</button>
           </div>
         )}
       </div>
